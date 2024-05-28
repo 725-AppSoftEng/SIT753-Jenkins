@@ -1,84 +1,91 @@
 pipeline {
     agent any
-    
     stages {
+        stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', credentialsId: '725-AppSoftEng', url: 'https://github.com/725-AppSoftEng/SIT753-Jenkins.git'
+            }
+        }
         stage('Build') {
             steps {
-                echo 'Building the code...'
-                // Example: using Maven to build the code
-                sh 'mvn clean package'
+                echo 'Building the code using Maven...'
+                // Task: Build the code using Maven
+                // Maven commands or build scripts can be added here
             }
         }
-        
         stage('Unit and Integration Tests') {
             steps {
-                echo 'Running unit and integration tests...'
-                // Example: running unit and integration tests with Maven
-                sh 'mvn test'
+                echo 'Running unit tests...'
+                // Task: Run unit tests
+                // Commands to execute unit tests can be added here
+                echo 'Running integration tests...'
+                // Task: Run integration tests
+                // Commands to execute integration tests can be added here
+            }
+            post {
+                success {
+                    emailext attachLog: true,
+                    body: 'Unit and integration tests passed.',
+                    subject: 'Test Success',
+                    to: 'wali.walimahesh16@gmail.com'
+                }
+                failure {
+                    emailext attachLog: true,
+                    body: 'Unit and integration tests failed.',
+                    subject: 'Test Failure',
+                    to: 'wali.walimahesh16@gmail.com'
+                }
             }
         }
-        
         stage('Code Analysis') {
             steps {
-                echo 'Analyzing the code...'
-                // Example: using SonarQube for code analysis
-                sh 'sonar-scanner'
+                echo 'Analyzing code using SonarQube...'
+                // Task: Integrate a code analysis tool (e.g., SonarQube)
+                // Commands to trigger code analysis with SonarQube can be added here
             }
         }
-        
         stage('Security Scan') {
             steps {
                 echo 'Performing security scan...'
-                // Example: using Snyk for security scanning
-                sh 'snyk test'
+                // Task: Perform a security scan on the code (e.g., SonarQube Security Plugin)
+                // Commands to trigger security scan can be added here
+            }
+            post {
+                success {
+                    emailext attachLog: true,
+                    body: 'Security scan passed',
+                    subject: 'Security Scan Success',
+                    to: 'manasa.kavali2001@gmail.com'
+                }
+                failure {
+                    emailext attachLog: true,
+                    body: 'Security vulnerabilities found',
+                    subject: 'Security Scan Failure',
+                    to: 'manasa.kavali2001@gmail.com'
+                }
             }
         }
-        
         stage('Deploy to Staging') {
             steps {
-                echo 'Deploying to staging...'
-                // Example: deploying to an AWS EC2 instance
-                sh 'scp target/app.war user@staging-server:/path/to/deploy'
+                echo 'Deploying the application to staging server...'
+                // Task: Deploy the application to a staging server (e.g., AWS EC2 instance)
+                // Commands to deploy to staging server can be added here
             }
         }
-        
         stage('Integration Tests on Staging') {
             steps {
-                echo 'Running integration tests on staging...'
-                // Example: running integration tests on the staging environment
-                sh 'mvn verify -Pstaging'
+                echo 'Running integration tests on staging environment...'
+                // Task: Run integration tests on the staging environment
+                // Commands to execute integration tests on staging can be added here
             }
         }
-        
         stage('Deploy to Production') {
             steps {
-                echo 'Deploying to production...'
-                // Example: deploying to a production server
-                sh 'scp target/app.war user@production-server:/path/to/deploy'
+                echo 'Deploying the application to production server...'
+                // Task: Deploy the application to a production server (e.g., AWS EC2 instance)
+                // Commands to deploy to production server can be added here
             }
-        }
-    }
-    
-    post {
-        success {
-            emailext (
-                subject: "Build SUCCESS: Job ${env.JOB_NAME} Build ${env.BUILD_NUMBER}",
-                body: """<p>Build completed successfully.</p>
-                         <p>Job: ${env.JOB_NAME}</p>
-                         <p>Build Number: ${env.BUILD_NUMBER}</p>
-                         <p>Check console output at ${env.BUILD_URL} to view the results.</p>""",
-                to: 'manasa.kavali2001@gmail.com'
-            )
-        }
-        failure {
-            emailext (
-                subject: "Build FAILURE: Job ${env.JOB_NAME} Build ${env.BUILD_NUMBER}",
-                body: """<p>Build failed.</p>
-                         <p>Job: ${env.JOB_NAME}</p>
-                         <p>Build Number: ${env.BUILD_NUMBER}</p>
-                         <p>Check console output at ${env.BUILD_URL} to view the results.</p>""",
-                to: 'manasa.kavali2001@gmail.com'
-            )
         }
     }
 }
