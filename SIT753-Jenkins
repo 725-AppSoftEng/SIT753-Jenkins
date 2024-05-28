@@ -4,7 +4,7 @@ pipeline {
         stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', credentialsId: '725-AppSoftEng', url: 'https://github.com/725-AppSoftEng/SIT753-Jenkins.git'
+                git branch: 'main', credentialsId: 'b2b3cd0c-7de4-47b2-bbc1-6d6e480c17b6', url: 'https://github.com/725-AppSoftEng/SIT753-Jenkins.git'
             }
         }
         stage('Build') {
